@@ -1,7 +1,51 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./smentertainment.css";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 const SmEnterTainMent: React.FC = () => {
+  gsap.registerPlugin(ScrollTrigger);
+  const textRefs = useRef<HTMLDivElement[]>([]); // 요소들을 배열로 관리
+  const triggerRef = useRef<HTMLDivElement>(null); // 가장 바깥 컨테이너
+
+  // 애니메이션 적용
+  useEffect(() => {
+    if (textRefs.current.length > 0) {
+      // gsap 애니메이션 적용
+      gsap.to(textRefs.current, {
+        scrollTrigger: {
+          trigger: triggerRef.current, // 부모 요소에서 트리거
+          start: "top bottom", // 스크롤 시작 지점
+          end: "bottom top", // 끝나는 지점
+          scrub: true, // 스크롤과 함께 애니메이션 진행
+          //   markers: true, // 개발용 마커 추가 (배포 시 제거 가능)
+        },
+        scale: 0.5, // 요소 크기 축소
+        ease: "none", // 이징 효과
+        // stagger: 0.1, // 여러 요소들이 순차적으로 애니메이션
+      });
+    }
+
+    // 새로 추가된 블러 효과
+
+    if (triggerRef.current) {
+      gsap.to(triggerRef.current, {
+        scrollTrigger: {
+          trigger: triggerRef.current, // 블러 효과를 적용할 트리거
+          start: "30% top", // 스크롤 시작 지점
+          end: "bottom top", // 끝나는 지점
+          scrub: true, // 스크롤과 함께 애니메이션 진행
+          markers: true, // 개발용 마커 추가 (배포 시 제거 가능)
+        },
+        filter: "blur(10px)", // 블러 효과
+        onStart: () => {
+          gsap.set(triggerRef.current, { filter: "blur(0px)" }); // 시작할 때 블러는 0
+        },
+        ease: "none", // 이징 효과 없이 스크롤과 비례하는 변화
+      });
+    }
+  }, []);
+
   const titleImages1 = [
     "/titleSvg/Zr.svg",
     "/titleSvg/Ar.svg",
@@ -42,12 +86,15 @@ const SmEnterTainMent: React.FC = () => {
   ];
 
   // mouseX와 mouseY 상태 추가
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [isMouseInside, setIsMouseInside] = useState(false);
+  const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
+  const [isMouseInside, setIsMouseInside] = useState<boolean>(false);
 
   const imageRefs = useRef<(HTMLImageElement | null)[]>([]);
 
-  // 마우스 위치 업데이트
+  // 마우스 위치 업데이트, (70vw안에 들어왔는지 체크)
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
       const mouseX = event.clientX;
@@ -79,9 +126,9 @@ const SmEnterTainMent: React.FC = () => {
 
     // 색상별 최대 크기 비율
     const maxRatios = [
-      1.11, // red (titleImages1)
-      1.15, // green (titleImages2)
-      1.2, // blue (titleImages3)
+      1.15, // red (titleImages1)
+      1.2, // green (titleImages2)
+      1.25, // blue (titleImages3)
     ];
 
     if (isMouseInside) {
@@ -112,7 +159,6 @@ const SmEnterTainMent: React.FC = () => {
 
           // 비율을 기준으로 크기 설정 (scale(1, y) 형태로 크기 변화)
           image.style.transform = `scale(1, ${scaleY})`;
-          console.log(`Image ${index}: scaleY = ${scaleY}`);
         }
       });
     } else {
@@ -126,6 +172,8 @@ const SmEnterTainMent: React.FC = () => {
   }, [mousePosition, isMouseInside]);
 
   // 이미지를 렌더링하는 함수
+  // 내부 return: map 메서드의 콜백 함수가 각 <img> 요소를 반환하여 배열로 생성.
+  // 외부 return: map 메서드로 만든 <img> 요소 배열을 renderImages 함수에서 반환.
   const renderImages = (images: string[], startIndex: number) => {
     return images.map((src, index) => {
       return (
@@ -141,53 +189,64 @@ const SmEnterTainMent: React.FC = () => {
   };
 
   return (
-    <div className="header fixed top-0 left-0 h-screen w-screen bg-black border-4">
-      <div className="tsCtr relative left-0 top-0 w-full h-screen">
-        <div className="t absolute top-1/2 left-0 right-0 text-center translate-y-[-50%] mix-blend-screen">
-          <div className="tCtr w-[70vw] m-auto text-center flex justify-center">
-            {renderImages(titleImages1, 0)} {/* 첫 번째 배열 렌더링 */}
-          </div>
-        </div>
+    <>
+      <div ref={triggerRef} className=" relative w-full h-[200vh] ">
+        <div className=" sticky top-0 left-0 h-screen  ">
+          <div className="relative left-0 top-0 w-full h-screen">
+            <div className="w-auto h-auto ">
+              <div className=" absolute top-1/2 left-0 right-0 text-center translate-y-[-50%] mix-blend-screen">
+                <div
+                  ref={(el) => el && textRefs.current.push(el)}
+                  className="w-[70vw]  m-auto text-center flex justify-center"
+                >
+                  {renderImages(titleImages1, 0)} {/* 첫 번째 배열 렌더링 */}
+                </div>
+              </div>
 
-        <div className="t absolute top-1/2 left-0 right-0 text-center translate-y-[-50%] mix-blend-screen">
-          <div className="tCtr w-[70vw] m-auto text-center flex justify-center">
-            {renderImages(titleImages2, titleImages1.length)}
-            {/* 두 번째 배열 렌더링 */}
-          </div>
-        </div>
+              <div className=" absolute top-1/2 left-0 right-0 text-center translate-y-[-50%] mix-blend-screen">
+                <div
+                  ref={(el) => el && textRefs.current.push(el)}
+                  className=" w-[70vw]  m-auto text-center flex justify-center"
+                >
+                  {renderImages(titleImages2, titleImages1.length)}
+                  {/* 두 번째 배열 렌더링 */}
+                </div>
+              </div>
 
-        <div className="t absolute top-1/2 left-0 right-0 text-center translate-y-[-50%] mix-blend-screen">
-          <div className="tCtr w-[70vw] m-auto text-center flex justify-center">
-            {renderImages(
-              titleImages3,
-              titleImages1.length + titleImages2.length
-            )}
+              <div className=" absolute top-1/2 left-0 right-0 text-center translate-y-[-50%] mix-blend-screen">
+                <div
+                  ref={(el) => el && textRefs.current.push(el)}
+                  className=" w-[70vw]  m-auto text-center flex justify-center"
+                >
+                  {renderImages(
+                    titleImages3,
+                    titleImages1.length + titleImages2.length
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+              <div
+                ref={(el) => el && textRefs.current.push(el)}
+                className="text-3xl text-[#fff] flex gap-4 relative top-[20vh] "
+              >
+                <div className="">sm X</div>
+                <div className="">a</div>
+                <div className="">e</div>
+                <div className="">s</div>
+                <div className="">p</div>
+                <div className="">a</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="sDown">
+            <div className="sDownFill" />
           </div>
         </div>
       </div>
-
-      <div className="job">
-        <div className="jobText" style={{ bottom: "224px" }}>
-          <div className="jobTextChar">P</div>
-          <div className="jobTextChar">P</div>
-          <div className="jobTextChar">H</div>
-          <div className="jobTextChar">O</div>
-          <div className="jobTextChar">T</div>
-          <div className="jobTextChar">O</div>
-          <div className="jobTextChar">G</div>
-          <div className="jobTextChar">R</div>
-          <div className="jobTextChar">A</div>
-          <div className="jobTextChar">P</div>
-          <div className="jobTextChar">H</div>
-          <div className="jobTextChar">E</div>
-          <div className="jobTextChar">R</div>
-        </div>
-      </div>
-
-      <div className="sDown">
-        <div className="sDownFill" />
-      </div>
-    </div>
+    </>
   );
 };
 

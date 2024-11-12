@@ -36,35 +36,3 @@
 .satoshi-Regular {
   font-family: "Satoshi-Regular", sans-serif;
 }
-
-/* smentertainment.css */
-.letter {
-  display: inline-block;
-  position: relative;
-  color: #ffffff;
-  transition: transform 1s ease-in-out;
-}
-
-.letter.glitch::before,
-.letter.glitch::after {
-  content: attr(data-char);
-  position: absolute;
-  top: 0;
-  left: 0;
-  color: #ff0000; /* 레드 */
-  z-index: -1;
-  transition: transform 1s ease-in-out;
-}
-
-.letter.glitch::after {
-  color: #0000ff; /* 블루 */
-  z-index: -2;
-}
-
-.letter.glitch::before {
-  transform: translateY(-10px); /* 위쪽 이동 */
-}
-
-.letter.glitch::after {
-  transform: translateY(10px); /* 아래쪽 이동 */
-}
