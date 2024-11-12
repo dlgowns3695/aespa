@@ -1,0 +1,70 @@
+@font-face {
+  font-family: "Humane-SemiBold";
+  src: url("/public/fonts/humanefont/Humane-SemiBold.ttf") format("truetype"),
+    url("/public/fonts/humanefont/Humane-SemiBold.woff") format("woff"),
+    url("/public/fonts/humanefont/Humane-SemiBold.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.humane-SemiBold {
+  font-family: "Humane-SemiBold", sans-serif;
+}
+
+@font-face {
+  font-family: "Humane-Regular";
+  src: url("/public/fonts/humanefont/Humane-Regular.ttf") format("truetype"),
+    url("/public/fonts/humanefont/Humane-Regular.woff") format("woff"),
+    url("/public/fonts/humanefont/Humane-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.humane-Regular {
+  font-family: "Humane-Regular", sans-serif;
+}
+
+@font-face {
+  font-family: "Satoshi-Regular";
+  src: url("/public/fonts/satoshifont/Satoshi-Regular.ttf") format("truetype"),
+    url("/public/fonts/satoshifont/Satoshi-Regular.woff") format("woff"),
+    url("/public/fonts/satoshifont/Satoshi-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.satoshi-Regular {
+  font-family: "Satoshi-Regular", sans-serif;
+}
+
+/* smentertainment.css */
+.letter {
+  display: inline-block;
+  position: relative;
+  color: #ffffff;
+  transition: transform 1s ease-in-out;
+}
+
+.letter.glitch::before,
+.letter.glitch::after {
+  content: attr(data-char);
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #ff0000; /* 레드 */
+  z-index: -1;
+  transition: transform 1s ease-in-out;
+}
+
+.letter.glitch::after {
+  color: #0000ff; /* 블루 */
+  z-index: -2;
+}
+
+.letter.glitch::before {
+  transform: translateY(-10px); /* 위쪽 이동 */
+}
+
+.letter.glitch::after {
+  transform: translateY(10px); /* 아래쪽 이동 */
+}
