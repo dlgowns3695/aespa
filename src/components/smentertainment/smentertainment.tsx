@@ -31,17 +31,23 @@ const SmEnterTainMent: React.FC = () => {
     if (triggerRef.current) {
       gsap.to(triggerRef.current, {
         scrollTrigger: {
-          trigger: triggerRef.current, // 블러 효과를 적용할 트리거
-          start: "30% top", // 스크롤 시작 지점
-          end: "bottom top", // 끝나는 지점
-          scrub: true, // 스크롤과 함께 애니메이션 진행
-          markers: true, // 개발용 마커 추가 (배포 시 제거 가능)
+          trigger: triggerRef.current, // 트리거 요소
+          start: "top top", // 시작 지점
+          end: "bottom bottom", // 끝 지점
+          scrub: true, // 스크롤과 애니메이션 연동
+          markers: true, // 디버깅용 마커
+
+          onLeave: () => {
+            // 스크롤이 `end` 지점에 도달할 때
+            gsap.to(triggerRef.current, { opacity: 0 }); // 투명도 0
+            console.log("Leave 투명도0");
+          },
+          onEnterBack: () => {
+            // 스크롤이 `start` 지점 위로 돌아올 때
+            gsap.to(triggerRef.current, { opacity: 1 }); // 투명도 1
+            console.log("EnterBack 투명도1");
+          },
         },
-        filter: "blur(10px)", // 블러 효과
-        onStart: () => {
-          gsap.set(triggerRef.current, { filter: "blur(0px)" }); // 시작할 때 블러는 0
-        },
-        ease: "none", // 이징 효과 없이 스크롤과 비례하는 변화
       });
     }
   }, []);

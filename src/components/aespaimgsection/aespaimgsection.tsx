@@ -5,85 +5,63 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 const AespaimgSection = () => {
   gsap.registerPlugin(ScrollTrigger);
 
-  // 타입 명시
   const triggerRef = useRef<HTMLDivElement>(null);
-  const gsapRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const winterRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (triggerRef.current && gsapRef.current && videoRef.current) {
+    if (triggerRef.current) {
+      // 전체 섹션의 pin 설정
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: triggerRef.current,
+          start: "top top", // 섹션이 화면 상단에 닿을 때 고정
+          end: "100% 100%",
+          scrub: 1,
+          // pin: true,
+          // markers: true, // 디버깅용
+        },
+      });
+    }
+
+    if (winterRef.current) {
+      // 이미지의 clip-path 애니메이션 설정
       gsap
         .timeline({
           scrollTrigger: {
-            trigger: triggerRef.current,
-            start: "0% 80%",
-            end: "100% 100%",
+            trigger: winterRef.current,
+            start: "top bottom", // 이미지가 뷰포트 하단에 닿을 때 시작
+            end: "bottom top", // 이미지가 화면 상단에 닿을 때 종료
             scrub: 1,
-            // markers: true,
+            // markers: true, // 디버깅용
           },
         })
-        .to(
-          gsapRef.current,
-          { backgroundColor: "#fff", color: "#000", ease: "none", duration: 5 },
-          0
-        )
-        // .to('.svgAni path', {stroke : "#000", ease:'none', duration:5}, 0)
         .fromTo(
-          videoRef.current,
-          { "clip-path": "inset(60% 60% 60% 60% round 30%)" },
+          winterRef.current,
           {
-            "clip-path": "inset(0% 0% 0% 0% round 0%)",
-            ease: "none",
-            duration: 20,
+            "clip-path": "inset(20% 20% 20% 20% round 16px)",
+            scale: 0.7,
           },
-          0
+          {
+            "clip-path": "inset(10% 10% 10% 10% round 16px)",
+            scale: 0.85,
+            ease: "none",
+            duration: 5,
+          }
         );
     }
   }, []);
 
   return (
-    <>
-      {/* <section
-        ref={gsapRef}
-        className="h-dvh bg-black text-white flex justify-center items-center border-4 border-red-600"
-      >
-        <div className="text-8xl uppercase leading-tight">
-          <span
-            className="text-transparent block"
-            style={{ WebkitTextStroke: "2px #b1dd40" }}
-          >
-            GSAP
-          </span>
-          ScrollTrigger
+    <section className="border-4 w-full h-[200vh] object-cover relative  top-[-100vh] ">
+      <div ref={triggerRef} className="w-full h-dvh sticky top-0 ">
+        <div
+          ref={winterRef}
+          className="w-full h-dvh rounded-3xl object-cover absolute left-0 top-0 flex justify-center"
+        >
+          <img src={`${process.env.PUBLIC_URL}/winter.jpg`} alt="winter" />
         </div>
-      </section> */}
-
-      <section
-        ref={triggerRef}
-        className="w-full h-dvh relative overflow-hidden"
-      >
-        <div>
-          {/* 모바일 IOS 등 모든환경 자동재생 */}
-          <video
-            ref={videoRef}
-            className="w-dvw h-dvh object-cover absolute left-0 top-0"
-            autoPlay
-            muted
-            loop
-            playsInline
-          >
-            <source src="ArmageddonINTRO.mp4" />
-          </video>
-          <div className="absolute w-full text-center left-0 top-1/2 -translate-y-1/2 text-white">
-            <h2 className="text-8xl leading-none tracking-widest">
-              Creativeness is all you need
-              <br />
-              for Digital Design
-            </h2>
-          </div>
-        </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 };
 
