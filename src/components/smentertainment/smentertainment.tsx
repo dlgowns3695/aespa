@@ -15,36 +15,48 @@ const SmEnterTainMent: React.FC = () => {
       gsap.to(textRefs.current, {
         scrollTrigger: {
           trigger: triggerRef.current, // 부모 요소에서 트리거
-          start: "top bottom", // 스크롤 시작 지점
-          end: "bottom top", // 끝나는 지점
+          start: "5% top", // 스크롤 시작 지점
+          end: "bottom bottom", // 끝나는 지점
           scrub: true, // 스크롤과 함께 애니메이션 진행
-          //   markers: true, // 개발용 마커 추가 (배포 시 제거 가능)
+          // markers: true, // 개발용 마커 (배포 시 제거 가능)
         },
-        scale: 0.5, // 요소 크기 축소
-        ease: "none", // 이징 효과
-        // stagger: 0.1, // 여러 요소들이 순차적으로 애니메이션
+        scale: 0.8, // 요소 크기 축소
       });
     }
 
-    // 새로 추가된 블러 효과
-
     if (triggerRef.current) {
+      // 초기 상태로 필터(블러 효과) 0px 설정
+      gsap.set(triggerRef.current, { filter: "blur(0px)" });
+
+      // 블러 효과 및 투명도 애니메이션
       gsap.to(triggerRef.current, {
         scrollTrigger: {
           trigger: triggerRef.current, // 트리거 요소
-          start: "top top", // 시작 지점
-          end: "bottom bottom", // 끝 지점
+          start: "5% top", // 스크롤 시작 지점
+          end: "bottom bottom", // 끝나는 지점
           scrub: true, // 스크롤과 애니메이션 연동
-          markers: true, // 디버깅용 마커
 
+          // 필터 효과 조정 (블러)
+          onUpdate: (self) => {
+            const blurValue = self.progress * 10; // progress에 따라 블러 값 계산
+            gsap.to(triggerRef.current, {
+              filter: `blur(${blurValue}px)`, // 블러 값 적용
+            });
+          },
+
+          // 투명도 애니메이션
           onLeave: () => {
             // 스크롤이 `end` 지점에 도달할 때
-            gsap.to(triggerRef.current, { opacity: 0 }); // 투명도 0
+            if (triggerRef.current) {
+              triggerRef.current.style.opacity = "0"; // 즉시 투명도 0 적용
+            }
             console.log("Leave 투명도0");
           },
           onEnterBack: () => {
             // 스크롤이 `start` 지점 위로 돌아올 때
-            gsap.to(triggerRef.current, { opacity: 1 }); // 투명도 1
+            if (triggerRef.current) {
+              triggerRef.current.style.opacity = "1"; // 즉시 투명도 1 적용
+            }
             console.log("EnterBack 투명도1");
           },
         },
